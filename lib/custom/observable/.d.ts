@@ -15,5 +15,5 @@ export default interface Observable<State> {
 
   emit: (action: (state: State) => State) => Observable<State>;
   subscribe: (handle: Observer<State>['handle']) => Subscriber;
-  unsubscribe: (id: Observer<State>['id']) => void;
+  // private unsubscribe: (id: Observer<State>['id']) => void;
 }
