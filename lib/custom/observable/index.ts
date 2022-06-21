@@ -3,34 +3,37 @@ import Contract, {
   Subscriber
 } from './.d';
 
-export class Observable<T> implements Contract<T> {
-  observers: Array<Observer<T>> = []
-  state: T;
+const OBSERVERS = Symbol('observers')
 
-  constructor(state: T) {
+export class Observable<State> implements Contract<State> {
+  state: State;
+
+  private [OBSERVERS]: Array<Observer<State>> = []
+
+  constructor(state: State) {
     this.state = { ...state }
   }
 
-  emit(action: (state: T) => T) {
+  emit(action: (state: State) => State) {
     if (action) {
       const result = action(this.state)
       if (result) this.state = {...result}
     }
 
-    this.observers.forEach(observer => {
+    this[OBSERVERS].forEach(observer => {
       observer.handle(this.state)
     })
 
     return this;
   };
 
-  subscribe(handle: (state: T) => any): Subscriber {
-    const observer: Observer<T> = {
+  subscribe(handle: (state: State) => any): Subscriber {
+    const observer: Observer<State> = {
       id: Symbol('id'),
       handle
     }
 
-    this.observers.push(observer)
+    this[OBSERVERS].push(observer)
     observer.handle(this.state)
 
     return {
@@ -41,6 +44,6 @@ export class Observable<T> implements Contract<T> {
   }
 
   unsubscribe(id: Symbol): void {
-    this.observers = this.observers.filter(observer => observer.id !== id)
+    this[OBSERVERS] = this[OBSERVERS].filter(observer => observer.id !== id)
   };
 }

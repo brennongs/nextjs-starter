@@ -25,14 +25,10 @@ describe('Observable', () => {
       expect(value).toBe(expectedValues.shift())
     })
 
-    subject.emit((_) => {
-      return { value: 'testing' }
-    })
+    subject.emit((_) => ({ value: 'testing' }))
 
     subscriber.unsubscribe()
 
-    subject.emit((_) => {
-      return { value: 'over' }
-    })
+    subject.emit((_) => ({ value: 'over' }))
   }) 
 })

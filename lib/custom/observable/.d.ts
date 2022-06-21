@@ -1,16 +1,19 @@
-export type Observer<T> = {
+export type Observer<State> = {
   id: Symbol;
-  handle: (state: T) => any
+  handle: (state: State) => any
 }
 
 export type Subscriber = {
   unsubscribe: () => void;
 }
 
-export default interface Observable<T> {
-  state: T;
-  observers: Array<Observer<T>>;
-  emit: (action: (state: T) => T) => Observable<T>;
-  subscribe: (handle: Observer<T>['handle']) => Subscriber;
-  unsubscribe: (id: Observer<T>['id']) => void;
+export default interface Observable<State> {
+  state: State;
+
+  // private observers array
+  [Symbol]: Array<Observer<State>>;
+
+  emit: (action: (state: State) => State) => Observable<State>;
+  subscribe: (handle: Observer<State>['handle']) => Subscriber;
+  unsubscribe: (id: Observer<State>['id']) => void;
 }
